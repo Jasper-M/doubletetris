@@ -13,7 +13,7 @@ import java.awt.event.ActionListener
 
 object GUI extends SimpleSwingApplication {
   
-  val controller = new Controller(Rectangle(60, 20))
+  val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
   val leftControls = ZQSD
   val rightControls = ARROWS

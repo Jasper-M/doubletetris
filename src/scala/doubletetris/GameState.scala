@@ -1,5 +1,7 @@
 package scala.doubletetris
 
+import scala.annotation.tailrec
+
 case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Block)])(implicit size: Rectangle) {
 
   private def addToBlocks(p: Player): GameState = p match {
@@ -17,24 +19,24 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
       )
   }
   
-  private def processLines(): GameState = {
+  @tailrec
+  final private[GameState] def processLines(): GameState = {
     val array = Array.fill(size.width)(0)
     for(block <- blocks.unzip._2){
       array(block.x) = array(block.x) + 1
     }
-    var newBlocks = blocks
-    for((nrBlocks, index) <- array.zipWithIndex){
-      if(nrBlocks == size.height)
-        newBlocks = removeLine(newBlocks, index)
+    array.zipWithIndex.find{case (nrBlocks, index) => nrBlocks == size.height} match {
+      case Some((_, index)) => 
+        GameState(
+          left,
+          right,
+          removeLine(blocks, index)
+        ).processLines()
+      case None => this
     }
-    GameState(
-        left,
-        right,
-        newBlocks
-    )
   }
   
-  private def removeLine(blocks: List[(Player, Block)], line: Int): List[(Player, Block)] = {
+  private def removeLine(blocks: List[(Player, Block)], line: Int): List[(Player, Block)] =
     blocks.flatMap(
       _ match {
         case (p, block) if block.x == line => None
@@ -50,7 +52,6 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
             Some(p, block)
       }
     )
-  }
   
   def moveLeft(): GameState = {
     val state = GameState(
