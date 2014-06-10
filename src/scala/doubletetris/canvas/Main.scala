@@ -16,7 +16,7 @@ object Main {
   val blockSize = 20
   
   @JSExport
-  def main(): Unit = {
+  def main() {
     canvas.width = controller.size.width*blockSize
     canvas.height = controller.size.height*blockSize
     
@@ -54,19 +54,19 @@ object Main {
 	  
     for((p,block) <- state.blocks){
       if(p == Left)
-        context.fillStyle ="white"
+        context.fillStyle = "white"
       else
-        context.fillStyle ="black"
+        context.fillStyle = "black"
       context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
     }
       
     for(block <- state.left.blocks){
-      context.fillStyle ="white"
+      context.fillStyle = "white"
       context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
     }
       
     for(block <- state.right.blocks){
-      context.fillStyle ="black"
+      context.fillStyle = "black"
       context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
     }
   }
