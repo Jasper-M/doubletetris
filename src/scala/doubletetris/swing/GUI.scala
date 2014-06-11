@@ -10,6 +10,7 @@ import scala.doubletetris.controller.Controller
 import javax.swing.Timer
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import java.awt.Font
 
 object GUI extends SimpleSwingApplication {
   
@@ -18,11 +19,15 @@ object GUI extends SimpleSwingApplication {
   val leftControls = ZQSD
   val rightControls = ARROWS
   
-  override def top = new MainFrame {
+  override def top = mainFrame
+  
+  val mainFrame: MainFrame = new MainFrame {
     contents = new Panel{
       
       title = "Double Tetris"
-      preferredSize = (controller.size.width*blockSize, controller.size.height*blockSize)
+      val width = controller.size.width*blockSize
+      val height = controller.size.height*blockSize
+      preferredSize = (width, height)
       background = new Color(100,100,100)
       
       val timer = new Timer(1000, new ActionListener(){
@@ -35,26 +40,37 @@ object GUI extends SimpleSwingApplication {
       
       override def paintComponent(g: Graphics2D) {
         super.paintComponent(g)
-	    val state = controller.state
+	    controller.state match {
+          case Playing(left,right,blocks,nrLines) => {
+
+            for ((p, block) <- blocks) {
+              if (p == Left)
+                g.setColor(Color.WHITE)
+              else
+                g.setColor(Color.BLACK)
+              g.fillRect(block.x * blockSize, block.y * blockSize, blockSize, blockSize)
+            }
+
+            for (block <- left.blocks) {
+              g.setColor(Color.WHITE)
+              g.fillRect(block.x * blockSize, block.y * blockSize, blockSize, blockSize)
+            }
+
+            for (block <- right.blocks) {
+              g.setColor(Color.BLACK)
+              g.fillRect(block.x * blockSize, block.y * blockSize, blockSize, blockSize)
+            }
+
+            mainFrame.title = "Lines scored: " + nrLines
+          }
+          case GameOver => {
+            timer.stop()
+            g.setColor(Color.WHITE)
+            g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
+            g.drawString("Game Over", width/2-75, height/2)
+          }
+        }
 	    
-	    for((p,block) <- state.blocks){
-	      if(p == Left)
-	        g.setColor(Color.WHITE)
-	      else
-	        g.setColor(Color.BLACK)
-	      g.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
-	    }
-        
-        for(block <- state.left.blocks){
-	      g.setColor(Color.WHITE)
-	      g.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
-	    }
-        
-        for(block <- state.right.blocks){
-	      g.setColor(Color.BLACK)
-	      g.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
-	    }
-        
       }
       this.focusable = true
       listenTo(keys)

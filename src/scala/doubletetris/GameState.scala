@@ -2,35 +2,42 @@ package scala.doubletetris
 
 import scala.annotation.tailrec
 
-case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Block)])(implicit size: Rectangle) {
+abstract class GameState
 
-  private def addToBlocks(p: Player): GameState = p match {
+case object GameOver extends GameState
+
+case class Playing(left: Tetromino, right: Tetromino, blocks: List[(Player, Block)], nrLines: Int)(implicit size: Rectangle) extends GameState {
+
+  private def addToBlocks(p: Player): Playing = p match {
     case Left => 
-      GameState(
+      Playing(
           Tetromino.random(Block(1,size.height/2)),
           right,
-          (List.fill(left.blocks.size)(Left) zip left.blocks) ++ blocks
+          (List.fill(left.blocks.size)(Left) zip left.blocks) ++ blocks,
+          nrLines
       )
     case Right => 
-      GameState(
+      Playing(
           left,
           Tetromino.random(Block(size.width-2,size.height/2)),
-          (List.fill(right.blocks.size)(Right) zip right.blocks) ++ blocks
+          (List.fill(right.blocks.size)(Right) zip right.blocks) ++ blocks,
+          nrLines
       )
   }
   
   @tailrec
-  final private[GameState] def processLines(): GameState = {
+  final private[Playing] def processLines(): Playing = {
     val array = Array.fill(size.width)(0)
-    for(block <- blocks.unzip._2){
+    for(block <- blocks.unzip._2) yield {
       array(block.x) = array(block.x) + 1
     }
     array.zipWithIndex.find{case (nrBlocks, index) => nrBlocks == size.height} match {
       case Some((_, index)) => 
-        GameState(
+        Playing(
           left,
           right,
-          removeLine(blocks, index)
+          removeLine(blocks, index),
+          nrLines+1
         ).processLines()
       case None => this
     }
@@ -54,45 +61,62 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
     )
   
   def moveLeft(): GameState = {
-    val state = GameState(
+    val state = Playing(
         left,
         right.left,
-        blocks
+        blocks,
+        nrLines
     )
-    if(state.hasOverlap())
-      if(state.left overlaps state.right)
+    
+    val newState = if(state.hasOverlap())
+      if(state.left overlaps state.right){
         this.addToBlocks(Right).addToBlocks(Left).processLines()
+      }
       else
         this.addToBlocks(Right).processLines()
     else state
+    
+    if(!newState.right.isInBoundsOf(size) || newState.hasOverlap)
+      GameOver
+    else
+      newState
   }
   
   def moveRight(): GameState = {
-    val state = GameState(
+    val state = Playing(
         left.right,
         right,
-        blocks
+        blocks,
+        nrLines
     )
-    if(state.hasOverlap())
+    
+    val newState = if(state.hasOverlap())
       if(state.left overlaps state.right)
         this.addToBlocks(Left).addToBlocks(Right).processLines()
       else
         this.addToBlocks(Left).processLines()
     else state
+    
+    if(!newState.left.isInBoundsOf(size) || newState.hasOverlap)
+      GameOver
+    else
+      newState
   }
     
   def moveUp(p: Player): GameState = {
     val state = p match {
       case Left =>
-        GameState(
+        Playing(
           left.up,
           right,
-          blocks)
+          blocks,
+          nrLines)
       case Right =>
-        GameState(
+        Playing(
           left,
           right.up,
-          blocks)
+          blocks,
+          nrLines)
     }
     if(state.left.isInBoundsOf(size) && state.right.isInBoundsOf(size) && !state.hasOverlap)
       state
@@ -103,15 +127,17 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
   def moveDown(p: Player): GameState = {
     val state = p match {
       case Left =>
-        GameState(
+        Playing(
           left.down,
           right,
-          blocks)
+          blocks,
+          nrLines)
       case Right =>
-        GameState(
+        Playing(
           left,
           right.down,
-          blocks)
+          blocks,
+          nrLines)
     }
     if(state.left.isInBoundsOf(size) && state.right.isInBoundsOf(size) && !state.hasOverlap)
       state
@@ -122,15 +148,17 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
   def rotate(p: Player): GameState = {
     val state = p match {
       case Left =>
-        GameState(
+        Playing(
           left.rotate,
           right,
-          blocks)
+          blocks,
+          nrLines)
       case Right =>
-        GameState(
+        Playing(
           left,
           right.rotate,
-          blocks)
+          blocks,
+          nrLines)
     }
     if(state.left.isInBoundsOf(size) && state.right.isInBoundsOf(size) && !state.hasOverlap)
       state
@@ -139,28 +167,35 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
   }
   
   def step(): GameState = {
-    var state = GameState(
+    var state = Playing(
         left.right,
         right,
-        blocks
+        blocks,
+        nrLines
     )
     
     if(state.hasOverlap())
-      state = this.addToBlocks(Left).processLines()
+      state = Playing.this.addToBlocks(Left).processLines()
     
-    val newState = GameState(
+    val newState = Playing(
         state.left,
         state.right.left,
-        state.blocks
+        state.blocks,
+        state.nrLines
     )
     
-    if(newState.hasOverlap())
+    val finalState = if(newState.hasOverlap())
       state.addToBlocks(Right).processLines()
     else
       newState
+      
+    if(finalState.hasOverlap() || !finalState.left.isInBoundsOf(size) || !finalState.right.isInBoundsOf(size))
+      GameOver
+    else
+      finalState
   }
   
-  private[GameState] def hasOverlap(): Boolean = 
+  private[Playing] def hasOverlap(): Boolean = 
     (left overlaps right) ||
     blocks.unzip._2.exists(left overlaps _) ||
     blocks.unzip._2.exists(right overlaps _)
@@ -169,11 +204,12 @@ case class GameState(left: Tetromino, right: Tetromino, blocks: List[(Player, Bl
 
 object GameState {
   
-  def init(size: Rectangle) = 
-    GameState(
+  def init(size: Rectangle): GameState = 
+    Playing(
         Tetromino.random(Block(1,size.height/2)),
         Tetromino.random(Block(size.width-2,size.height/2)),
-        List.empty
+        List.empty,
+        0
     )(size)
 }
 

@@ -12,9 +12,11 @@ object Main {
   val leftControls = ZQSD
   val rightControls = ARROWS
   val canvas = g.document.getElementById("doubletetris_canvas")
+  val scoreDiv = g.document.getElementById("doubletetris_score")
   val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
-  
+  var stopTimer = false
+
   @JSExport
   def main() {
     canvas.width = controller.size.width*blockSize
@@ -42,33 +44,46 @@ object Main {
   private def step() {
     controller.step()
     repaint()
-    g.window.setTimeout(() => step(), 1000)
+    if(!stopTimer) g.window.setTimeout(() => step(), 1000)
   }
   
   private def repaint() {
-    val state = controller.state
-	  val context = canvas.getContext("2d")
-	  
-	  context.fillStyle = "rgb(100,100,100)"
-	  context.fillRect(0, 0, canvas.width, canvas.height)
-	  
-    for((p,block) <- state.blocks){
-      if(p == Left)
-        context.fillStyle = "white"
-      else
-        context.fillStyle = "black"
-      context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
-    }
+    val context = canvas.getContext("2d")
+    
+    context.fillStyle = "rgb(100,100,100)"
+    context.fillRect(0, 0, canvas.width, canvas.height)
+    
+    controller.state match {
+      case Playing(left,right,blocks,nrLines) => {
       
-    for(block <- state.left.blocks){
-      context.fillStyle = "white"
-      context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
+        for((p,block) <- blocks){
+          if(p == Left)
+            context.fillStyle = "white"
+          else
+            context.fillStyle = "black"
+          context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
+        }
+          
+        for(block <- left.blocks){
+          context.fillStyle = "white"
+          context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
+        }
+          
+        for(block <- right.blocks){
+          context.fillStyle = "black"
+          context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
+        }
+        
+        scoreDiv.innerHTML = nrLines
+      }
+      case GameOver => {
+        stopTimer = true
+        context.fillStyle = "white";
+        context.font = "bold 30pt monospace";
+        context.fillText("Game Over", canvas.width/2-100, canvas.height/2);
+      }
     }
-      
-    for(block <- state.right.blocks){
-      context.fillStyle = "black"
-      context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
-    }
+	  
   }
 
 }
