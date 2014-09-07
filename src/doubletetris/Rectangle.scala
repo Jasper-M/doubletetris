@@ -1,3 +1,3 @@
-package scala.doubletetris
+package doubletetris
 
 case class Rectangle(width: Int, height: Int)

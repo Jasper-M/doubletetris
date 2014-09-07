@@ -1,4 +1,4 @@
-package scala.doubletetris
+package doubletetris
 
 case class Block(x: Int, y: Int) {
   

@@ -1,10 +1,10 @@
-package scala.doubletetris.canvas
+package doubletetris.canvas
 
 import scala.scalajs.js
 import js.Dynamic.{ global => g }
 import js.annotation.JSExport
-import scala.doubletetris._
-import scala.doubletetris.controller._
+import doubletetris._
+import doubletetris.controller._
 
 @JSExport
 object Main {

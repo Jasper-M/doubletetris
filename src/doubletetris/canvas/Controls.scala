@@ -1,4 +1,4 @@
-package scala.doubletetris.canvas
+package doubletetris.canvas
 
 abstract class Controls {
 

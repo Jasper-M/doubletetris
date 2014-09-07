@@ -1,12 +1,12 @@
-package scala.doubletetris.swing
+package doubletetris.swing
 
 import scala.swing._
 import scala.swing.Swing._
 import java.awt.Color
 import scala.swing.event.KeyPressed
 import scala.swing.event.Key
-import scala.doubletetris._
-import scala.doubletetris.controller.Controller
+import doubletetris._
+import doubletetris.controller.Controller
 import javax.swing.Timer
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -16,7 +16,7 @@ object GUI extends SimpleSwingApplication {
   
   val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
-  val leftControls = ZQSD
+  val leftControls = WASD
   val rightControls = ARROWS
   
   override def top = mainFrame

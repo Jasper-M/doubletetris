@@ -1,4 +1,4 @@
-package scala.doubletetris.swing
+package doubletetris.swing
 
 import scala.swing.event.Key
 

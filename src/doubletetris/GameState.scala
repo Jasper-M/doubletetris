@@ -1,4 +1,4 @@
-package scala.doubletetris
+package doubletetris
 
 import scala.annotation.tailrec
 

@@ -1,10 +1,10 @@
-package scala.doubletetris.controller
+package doubletetris.controller
 
-import scala.doubletetris.Rectangle
-import scala.doubletetris.GameState
-import scala.doubletetris.Player
-import scala.doubletetris.Playing
-import scala.doubletetris.GameOver
+import doubletetris.Rectangle
+import doubletetris.GameState
+import doubletetris.Player
+import doubletetris.Playing
+import doubletetris.GameOver
 
 class Controller(val size: Rectangle) {
   
