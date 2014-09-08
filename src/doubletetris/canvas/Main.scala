@@ -11,8 +11,8 @@ object Main {
 
   val leftControls = ZQSD
   val rightControls = ARROWS
-  val canvas = g.document.getElementById("doubletetris_canvas")
-  val scoreDiv = g.document.getElementById("doubletetris_score")
+  val canvas = g.document.createElement("canvas")
+  val score = g.document.createElement("span")
   val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
   var stopTimer = false
@@ -21,6 +21,18 @@ object Main {
   def main() {
     canvas.width = controller.size.width*blockSize
     canvas.height = controller.size.height*blockSize
+    
+    val scoreP = g.document.createElement("p")
+    val scorePText = g.document.createTextNode("Lines scored: ")
+    val scoreText = g.document.createTextNode("0")
+    scoreP.appendChild(scorePText)
+    score.appendChild(scoreText)
+    scoreP.appendChild(score)
+    
+    val app = g.document.getElementById("doubletetris_app")
+    app.appendChild(scoreP)
+    app.appendChild(canvas)
+    
     
     g.window.setTimeout(() => step(), 1000)
     
@@ -74,7 +86,7 @@ object Main {
           context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
         }
         
-        scoreDiv.innerHTML = nrLines
+        score.innerHTML = nrLines
       }
       case GameOver => {
         stopTimer = true

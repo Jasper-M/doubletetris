@@ -28,7 +28,7 @@ case class Playing(left: Tetromino, right: Tetromino, blocks: List[(Player, Bloc
   @tailrec
   final private[Playing] def processLines(): Playing = {
     val array = Array.fill(size.width)(0)
-    for(block <- blocks.unzip._2) yield {
+    for(block <- blocks.unzip._2) {
       array(block.x) = array(block.x) + 1
     }
     array.zipWithIndex.find{case (nrBlocks, index) => nrBlocks == size.height} match {
@@ -197,8 +197,7 @@ case class Playing(left: Tetromino, right: Tetromino, blocks: List[(Player, Bloc
   
   private[Playing] def hasOverlap(): Boolean = 
     (left overlaps right) ||
-    blocks.unzip._2.exists(left overlaps _) ||
-    blocks.unzip._2.exists(right overlaps _)
+    blocks.unzip._2.exists( b => (left overlaps b) || (right overlaps b))
   
 }
 
