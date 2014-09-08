@@ -37,7 +37,7 @@ object Main {
     qwerty.checked = "checked"
     qwerty.onchange = () => kbLayoutChanged("qwerty")
     val qwertylabel = g.document.createElement("label")
-    qwertylabel.`for` = "qwerty"
+    qwertylabel.appendChild(qwerty)
     qwertylabel.appendChild(g.document.createTextNode("qwerty"))
     val azerty = g.document.createElement("input")
     azerty.`type` = "radio"
@@ -46,16 +46,14 @@ object Main {
     azerty.id = "azerty"
     azerty.onchange = () => kbLayoutChanged("azerty")
     val azertylabel = g.document.createElement("label")
-    azertylabel.`for` = "azerty"
+    azertylabel.appendChild(azerty)
     azertylabel.appendChild(g.document.createTextNode("azerty"))
     
     val app = g.document.getElementById("doubletetris_app")
     app.appendChild(scoreP)
     app.appendChild(canvas)
     app.appendChild(g.document.createElement("br"))
-    app.appendChild(qwerty)
     app.appendChild(qwertylabel)
-    app.appendChild(azerty)
     app.appendChild(azertylabel)
     
     
