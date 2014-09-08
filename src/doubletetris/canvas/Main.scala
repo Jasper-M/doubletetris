@@ -9,7 +9,7 @@ import doubletetris.controller._
 @JSExport
 object Main {
 
-  val leftControls = ZQSD
+  var leftControls: Controls = WASD
   val rightControls = ARROWS
   val canvas = g.document.createElement("canvas")
   val score = g.document.createElement("span")
@@ -29,9 +29,34 @@ object Main {
     score.appendChild(scoreText)
     scoreP.appendChild(score)
     
+    val qwerty = g.document.createElement("input")
+    qwerty.`type` = "radio"
+    qwerty.name = "keyboard"
+    qwerty.value = "qwerty"
+    qwerty.id = "qwerty"
+    qwerty.checked = "checked"
+    qwerty.onchange = () => kbLayoutChanged("qwerty")
+    val qwertylabel = g.document.createElement("label")
+    qwertylabel.`for` = "qwerty"
+    qwertylabel.appendChild(g.document.createTextNode("qwerty"))
+    val azerty = g.document.createElement("input")
+    azerty.`type` = "radio"
+    azerty.name = "keyboard"
+    azerty.value = "azerty"
+    azerty.id = "azerty"
+    azerty.onchange = () => kbLayoutChanged("azerty")
+    val azertylabel = g.document.createElement("label")
+    azertylabel.`for` = "azerty"
+    azertylabel.appendChild(g.document.createTextNode("azerty"))
+    
     val app = g.document.getElementById("doubletetris_app")
     app.appendChild(scoreP)
     app.appendChild(canvas)
+    app.appendChild(g.document.createElement("br"))
+    app.appendChild(qwerty)
+    app.appendChild(qwertylabel)
+    app.appendChild(azerty)
+    app.appendChild(azertylabel)
     
     
     g.window.setTimeout(() => step(), 1000)
@@ -51,6 +76,13 @@ object Main {
     else if(e.keyCode == rightControls.down) controller.moveDown(Right)
     else if(e.keyCode == rightControls.right) controller.rotate(Right)
     repaint()
+  }
+  
+  private def kbLayoutChanged(e: String) {
+    leftControls = e match {
+      case "qwerty" => WASD
+      case "azerty" => ZQSD
+    }
   }
   
   private def step() {
