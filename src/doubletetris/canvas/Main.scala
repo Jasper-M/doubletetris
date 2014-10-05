@@ -16,6 +16,9 @@ object Main {
   val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
   var stopTimer = false
+  
+  val qwerty = g.document.createElement("input")
+  val azerty = g.document.createElement("input")
 
   @JSExport
   def main() {
@@ -29,7 +32,7 @@ object Main {
     score.appendChild(scoreText)
     scoreP.appendChild(score)
     
-    val qwerty = g.document.createElement("input")
+    //val qwerty = g.document.createElement("input")
     qwerty.`type` = "radio"
     qwerty.name = "keyboard"
     qwerty.value = "qwerty"
@@ -39,7 +42,7 @@ object Main {
     val qwertylabel = g.document.createElement("label")
     qwertylabel.appendChild(qwerty)
     qwertylabel.appendChild(g.document.createTextNode("qwerty"))
-    val azerty = g.document.createElement("input")
+    //val azerty = g.document.createElement("input")
     azerty.`type` = "radio"
     azerty.name = "keyboard"
     azerty.value = "azerty"
@@ -78,9 +81,14 @@ object Main {
   
   private def kbLayoutChanged(e: String) {
     leftControls = e match {
-      case "qwerty" => WASD
-      case "azerty" => ZQSD
+      case "qwerty" => 
+        qwerty.blur()
+        WASD
+      case "azerty" => 
+        azerty.blur()
+        ZQSD
     }
+    
   }
   
   private def step() {

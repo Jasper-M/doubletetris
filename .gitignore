@@ -1,0 +1,6 @@
+bin/
+scalajs-bin/
+.*
+*.class
+*.sjsir
+*~

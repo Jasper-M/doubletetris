@@ -26,7 +26,7 @@ class Tetromino(states: Seq[Set[Block]], state: Int) {
 }
 
 object Tetromino {
-  lazy val rand = new Random()
+  val rand = new Random()
   
   def random(block: Block) = rand.nextInt(7) match {
     case 0 => I(block)
