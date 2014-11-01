@@ -1,6 +1,2 @@
-bin/
-scalajs-bin/
+target/
 .*
-*.class
-*.sjsir
-*~
