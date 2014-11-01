@@ -4,6 +4,8 @@ scalaVersion := "2.10.4"
 
 version := "1.0"
 
+EclipseKeys.skipProject := true    // don't generate eclipse project files for the parent project
+
 lazy val root = project.in(file(".")).aggregate()
 
 lazy val doubletetrisJS = project.in(file("doubletetris-js"))
