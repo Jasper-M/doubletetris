@@ -60,9 +60,9 @@ object Main {
     app.appendChild(azertylabel)
     
     
-    g.window.setTimeout(() => step(), 1000)
+    initTimer()
     
-    g.window.addEventListener("keydown", keyPressed(_:KeyBoardEvent), false)
+    g.window.addEventListener("keydown", keyPressed _, false)
     
     repaint()
   }
@@ -91,10 +91,14 @@ object Main {
     
   }
   
+  private def initTimer() {
+    g.window.setTimeout(step _, 1000)
+  }
+  
   private def step() {
     controller.step()
     repaint()
-    if(!stopTimer) g.window.setTimeout(() => step(), 1000)
+    if(!stopTimer) initTimer()
   }
   
   private def repaint() {
