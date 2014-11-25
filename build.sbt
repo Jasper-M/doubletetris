@@ -8,7 +8,7 @@ EclipseKeys.skipProject := true    // don't generate eclipse project files for t
 
 lazy val root = project.in(file(".")).aggregate()
 
-lazy val doubletetrisJS = project.in(file("doubletetris-js"))
+lazy val `doubletetris-js` = project.in(file("doubletetris-js"))
   .settings(scalaJSSettings: _*)
   .settings(
     name := "doubletetris-js",
@@ -16,7 +16,7 @@ lazy val doubletetrisJS = project.in(file("doubletetris-js"))
       (baseDirectory in root).value / "doubletetris-shared" / "src" / "main" / "scala"
 )
 
-lazy val doubletetrisJVM = project.in(file("doubletetris-jvm"))
+lazy val `doubletetris-jvm` = project.in(file("doubletetris-jvm"))
   .settings(
     name := "doubletetris-jvm",
     unmanagedSourceDirectories in Compile +=
