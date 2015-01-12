@@ -6,7 +6,7 @@ import js.annotation.JSExport
 import doubletetris._
 import doubletetris.controller._
 
-@JSExport
+@JSExport("Main")
 object Main {
 
   var leftControls: Controls = WASD
@@ -134,7 +134,10 @@ object Main {
         stopTimer = true
         context.fillStyle = "white";
         context.font = "bold 30pt monospace";
-        context.fillText("Game Over", canvas.width/2-100, canvas.height/2);
+        {
+          import js.DynamicImplicits._ //TODO fix this later
+          context.fillText("Game Over", canvas.width/2-100, canvas.height/2);
+        }
       }
     }
 	  
@@ -143,5 +146,5 @@ object Main {
 }
 
 trait KeyBoardEvent extends js.Object {
-  val keyCode: js.Number = ???
+  val keyCode: Double = js.native
 }

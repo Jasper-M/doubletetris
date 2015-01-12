@@ -9,7 +9,7 @@ EclipseKeys.skipProject := true    // don't generate eclipse project files for t
 lazy val root = project.in(file(".")).aggregate()
 
 lazy val `doubletetris-js` = project.in(file("doubletetris-js"))
-  .settings(scalaJSSettings: _*)
+  .enablePlugins(ScalaJSPlugin)
   .settings(
     name := "doubletetris-js",
     unmanagedSourceDirectories in Compile +=
