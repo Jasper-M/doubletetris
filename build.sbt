@@ -1,8 +1,6 @@
 name := "doubletetris"
 
-scalaVersion := "2.10.4"
-
-version := "1.0"
+scalaVersion := "2.11.5"
 
 EclipseKeys.skipProject := true    // don't generate eclipse project files for the parent project
 
@@ -12,6 +10,7 @@ lazy val `doubletetris-js` = project.in(file("doubletetris-js"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
     name := "doubletetris-js",
+    scalaVersion := "2.11.5",
     unmanagedSourceDirectories in Compile +=
       (baseDirectory in root).value / "doubletetris-shared" / "src" / "main" / "scala"
 )
@@ -19,7 +18,9 @@ lazy val `doubletetris-js` = project.in(file("doubletetris-js"))
 lazy val `doubletetris-jvm` = project.in(file("doubletetris-jvm"))
   .settings(
     name := "doubletetris-jvm",
+    scalaVersion := "2.11.5",
     unmanagedSourceDirectories in Compile +=
       (baseDirectory in root).value / "doubletetris-shared" / "src" / "main" / "scala",
-    libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
+    libraryDependencies += "org.scala-lang.modules" % "scala-swing_2.11" % "1.0.1"
+
 )
