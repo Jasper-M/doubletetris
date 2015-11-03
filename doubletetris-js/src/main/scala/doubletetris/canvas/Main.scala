@@ -1,33 +1,33 @@
 package doubletetris.canvas
 
 import scala.scalajs.js
-import js.Dynamic.{ global => g }
 import js.annotation.JSExport
 import doubletetris._
 import doubletetris.controller._
+import org.scalajs.dom._, ext.Castable
 
 @JSExport("Main")
 object Main {
 
   var leftControls: Controls = WASD
   val rightControls = ARROWS
-  val canvas = g.document.createElement("canvas")
-  val score = g.document.createElement("span")
+  val canvas = document.createElement("canvas").cast[html.Canvas]
+  val score = document.createElement("span").cast[html.Element]
   val controller = new Controller(Rectangle(30, 10))
   val blockSize = 20
   var stopTimer = false
   
-  val qwerty = g.document.createElement("input")
-  val azerty = g.document.createElement("input")
+  val qwerty = document.createElement("input").cast[html.Input]
+  val azerty = document.createElement("input").cast[html.Input]
 
   @JSExport
   def main() {
     canvas.width = controller.size.width*blockSize
     canvas.height = controller.size.height*blockSize
     
-    val scoreP = g.document.createElement("p")
-    val scorePText = g.document.createTextNode("Lines scored: ")
-    val scoreText = g.document.createTextNode("0")
+    val scoreP = document.createElement("p")
+    val scorePText = document.createTextNode("Lines scored: ")
+    val scoreText = document.createTextNode("0")
     scoreP.appendChild(scorePText)
     score.appendChild(scoreText)
     scoreP.appendChild(score)
@@ -37,37 +37,37 @@ object Main {
     qwerty.name = "keyboard"
     qwerty.value = "qwerty"
     qwerty.id = "qwerty"
-    qwerty.checked = "checked"
-    qwerty.onchange = () => kbLayoutChanged("qwerty")
-    val qwertylabel = g.document.createElement("label")
+    qwerty.checked = true
+    qwerty.onchange = (e: Event) => kbLayoutChanged("qwerty")
+    val qwertylabel = document.createElement("label")
     qwertylabel.appendChild(qwerty)
-    qwertylabel.appendChild(g.document.createTextNode("qwerty"))
+    qwertylabel.appendChild(document.createTextNode("qwerty"))
     //val azerty = g.document.createElement("input")
     azerty.`type` = "radio"
     azerty.name = "keyboard"
     azerty.value = "azerty"
     azerty.id = "azerty"
-    azerty.onchange = () => kbLayoutChanged("azerty")
-    val azertylabel = g.document.createElement("label")
+    azerty.onchange = (e: Event) => kbLayoutChanged("azerty")
+    val azertylabel = document.createElement("label")
     azertylabel.appendChild(azerty)
-    azertylabel.appendChild(g.document.createTextNode("azerty"))
+    azertylabel.appendChild(document.createTextNode("azerty"))
     
-    val app = g.document.getElementById("doubletetris_app")
+    val app = document.getElementById("doubletetris_app")
     app.appendChild(scoreP)
     app.appendChild(canvas)
-    app.appendChild(g.document.createElement("br"))
+    app.appendChild(document.createElement("br"))
     app.appendChild(qwertylabel)
     app.appendChild(azertylabel)
     
     
     initTimer()
     
-    g.window.addEventListener("keydown", keyPressed _, false)
+    window.addEventListener("keydown", keyPressed _, false)
     
     repaint()
   }
   
-  private def keyPressed(e: KeyBoardEvent) {
+  private def keyPressed(e: KeyboardEvent) {
     if(e.keyCode == leftControls.up) controller.moveUp(Left)
     else if(e.keyCode == leftControls.left) controller.rotate(Left)
     else if(e.keyCode == leftControls.down) controller.moveDown(Left)
@@ -92,7 +92,7 @@ object Main {
   }
   
   private def initTimer() {
-    g.window.setTimeout(step _, 1000)
+    window.setTimeout(step _, 1000)
   }
   
   private def step() {
@@ -102,7 +102,7 @@ object Main {
   }
   
   private def repaint() {
-    val context = canvas.getContext("2d")
+    val context = canvas.getContext("2d").cast[CanvasRenderingContext2D]
     
     context.fillStyle = "rgb(100,100,100)"
     context.fillRect(0, 0, canvas.width, canvas.height)
@@ -128,23 +128,16 @@ object Main {
           context.fillRect(block.x*blockSize, block.y*blockSize, blockSize, blockSize)
         }
         
-        score.innerHTML = nrLines
+        score.innerHTML = nrLines.toString
       }
       case GameOver => {
         stopTimer = true
-        context.fillStyle = "white";
-        context.font = "bold 30pt monospace";
-        {
-          import js.DynamicImplicits._ //TODO fix this later
-          context.fillText("Game Over", canvas.width/2-100, canvas.height/2);
-        }
+        context.fillStyle = "white"
+        context.font = "bold 30pt monospace"
+        context.fillText("Game Over", canvas.width/2-100, canvas.height/2)
       }
     }
 	  
   }
 
-}
-
-trait KeyBoardEvent extends js.Object {
-  val keyCode: Double = js.native
 }

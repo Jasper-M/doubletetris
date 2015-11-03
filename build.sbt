@@ -12,7 +12,8 @@ lazy val `doubletetris-js` = project.in(file("doubletetris-js"))
     name := "doubletetris-js",
     scalaVersion := "2.11.5",
     unmanagedSourceDirectories in Compile +=
-      (baseDirectory in root).value / "doubletetris-shared" / "src" / "main" / "scala"
+      (baseDirectory in root).value / "doubletetris-shared" / "src" / "main" / "scala",
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.8.0"
 )
 
 lazy val `doubletetris-jvm` = project.in(file("doubletetris-jvm"))
